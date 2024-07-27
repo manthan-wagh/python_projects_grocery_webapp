@@ -6,6 +6,7 @@ import json
 import products_dao
 import orders_dao
 import uom_dao
+import customer_dao
 
 app = Flask(__name__)
 
@@ -46,8 +47,10 @@ def get_all_orders():
 def insert_order():
     request_payload = json.loads(request.form['data'])
     order_id = orders_dao.insert_order(connection, request_payload)
+    customer_id = customer_dao.insert_new_customer(connection, ((request_payload['customer_name']), request_payload['grand_total']))
     response = jsonify({
-        'order_id': order_id
+        'order_id': order_id,
+        'customer_id' : customer_id
     })
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
